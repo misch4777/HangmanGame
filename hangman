@@ -1,0 +1,195 @@
+package hangman;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class hangmanGame {
+	
+	static boolean winCheck(String[] args) {
+
+		boolean wincheck=true;
+		
+		int plength = args.length;
+		for(int p=0;p<plength;p++) {
+			if(args[p].equals("_")) {
+				wincheck=false;
+			}
+		}
+		
+		return wincheck;
+		
+	}
+	
+	static boolean letterInWord(String letter, String[] word){
+		for(int p=0;p<word.length;p++) {
+			if(word[p].equalsIgnoreCase(letter)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	static void revealLetters(String letter, String[] hangman, String[] guessString) {
+		for(int p=0;p<guessString.length;p++) {
+			if(hangman[p].equalsIgnoreCase(letter)){
+				guessString[p]=letter.toUpperCase();
+			}
+		}
+	}
+	
+	static boolean playoncheck(String args) {
+		if(args.contentEquals("YES")) {
+			return true;
+		} else if(args.contentEquals("NO")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		
+		boolean playon = true;
+		while(playon==true) {
+		
+		
+		int min = 1;
+		int max = 10001;
+		int random = (int)(Math.random() * (max-min+1)+min);
+		
+		
+		Scanner input = new Scanner(System.in);
+		
+		String hangmanWordstring = Files.readAllLines(Paths.get("dictionary.txt")).get(random);
+		
+		
+		
+		char[] hangmanWordchar = hangmanWordstring.toCharArray();
+		int charlength = hangmanWordchar.length;
+		String[] hangmanWord = new String [charlength];
+		
+		for(int z=0;z<charlength;z++) {
+			hangmanWord[z]=Character.toString(hangmanWordchar[z]);
+		}
+		
+		
+		System.out.println("Welcome to Hangman! \n The word you are guessing is " + hangmanWord.length + " letters long");
+		
+		Set<String> usedLetters = new HashSet<String>();
+		int chancesRemaining=5;
+		
+		int wordLength = hangmanWord.length;
+		//RESOLVE THIS FUNCTION ABOVE FOR ARRAYS ^^^
+		String[] guessString = new String[wordLength];
+		
+		
+		for(int i=0; i<wordLength; i++) {
+			guessString[i]="_";
+		}
+		
+		
+		while(winCheck(guessString)==false) {
+			if(chancesRemaining==0) {
+				break;
+			}
+			System.out.println("Your guesses so far are" + java.util.Arrays.deepToString(usedLetters.toArray()));
+			System.out.println(java.util.Arrays.deepToString(guessString));
+			System.out.println("Please make your next guess");
+			String guess = input.nextLine();
+			guess = guess.toUpperCase();
+			
+			if(letterInWord(guess, hangmanWord)==false) {
+
+				boolean added = usedLetters.add(guess);
+				if(added==false) {
+					System.out.println("You have already made this guess! Please guess again.");
+					System.out.println("You have " + chancesRemaining + " guesses left.");
+				} else {
+					System.out.println("Bad luck!");
+					chancesRemaining--;
+					System.out.println("You have " + chancesRemaining + " guesses left.");
+					if(chancesRemaining==4) {
+						System.out.println("_______");
+						System.out.println("|      |");
+						System.out.println("|       ");
+						System.out.println("|       ");
+						System.out.println("|       ");
+						System.out.println("|       ");
+						System.out.println("|__     ");
+					} else if(chancesRemaining==3) {
+						System.out.println("_______");
+						System.out.println("|      |");
+						System.out.println("|      O");
+						System.out.println("|       ");
+						System.out.println("|       ");
+						System.out.println("|       ");
+						System.out.println("|__     ");
+						
+					} else if(chancesRemaining==2) {
+						System.out.println("_______");
+						System.out.println("|      |");
+						System.out.println("|      O");
+						System.out.println("|      |");
+						System.out.println("|      |");
+						System.out.println("|       ");
+						System.out.println("|__     ");
+					} else if(chancesRemaining==1) {
+						System.out.println("_______");
+						System.out.println("|      |");
+						System.out.println("|      O");
+						System.out.println("|      |");
+						System.out.println("|     _|_");
+						System.out.println("|    |   |");
+						System.out.println("|__     ");
+					}
+				}	
+			} else {
+				revealLetters(guess, hangmanWord, guessString);
+				System.out.println("Congratulations! Your guess is correct!");
+				usedLetters.add(guess);
+				System.out.println("You have " + chancesRemaining + " guesses left.");
+				
+			}
+			
+		}
+		if(chancesRemaining == 0) {
+			System.out.println("Sorry, you have run out of guesses! You lose");
+			System.out.println("_______");
+			System.out.println("|      |");
+			System.out.println("|      O");
+			System.out.println("|     _|_");
+			System.out.println("|     _|_");
+			System.out.println("|    |   |");
+			System.out.println("|__     ");
+			System.out.println("The word you were looking for is " + hangmanWordstring.toUpperCase());
+		} else {
+			System.out.println(java.util.Arrays.deepToString(guessString));
+			System.out.println("Congratulations! You have won!");
+		}
+		boolean check1 = true;
+		String playagain1 = "";
+		while(check1==true){
+			System.out.println("Would you like to play again? YES or NO");
+			playagain1 = input.nextLine();
+			playagain1 = playagain1.toUpperCase();
+			if(playoncheck(playagain1)==false) {
+				System.out.println("Invalid input. Please enter either YES or NO");
+			} else {
+				check1 = false;
+			}
+		}
+		
+		if(playagain1.contentEquals("YES")) {
+			playon = true;
+		} else {
+			playon = false;
+			System.out.println("Thanks for playing!");
+		}
+		}
+	}
+}
