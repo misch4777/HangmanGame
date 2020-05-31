@@ -59,7 +59,7 @@ public class hangmanGame {
 		
 		
 		int min = 1;
-		int max = 10001;
+		int max = 8865;
 		int random = (int)(Math.random() * (max-min+1)+min);
 		
 		
@@ -78,13 +78,12 @@ public class hangmanGame {
 		}
 		
 		
-		System.out.println("Welcome to Hangman! \n The word you are guessing is " + hangmanWord.length + " letters long");
+		System.out.println("Welcome to Hangman!\nThe word you are guessing is " + hangmanWord.length + " letters long");
 		
 		Set<String> usedLetters = new HashSet<String>();
 		int chancesRemaining=5;
 		
 		int wordLength = hangmanWord.length;
-		//RESOLVE THIS FUNCTION ABOVE FOR ARRAYS ^^^
 		String[] guessString = new String[wordLength];
 		
 		
@@ -97,13 +96,16 @@ public class hangmanGame {
 			if(chancesRemaining==0) {
 				break;
 			}
-			System.out.println("Your guesses so far are" + java.util.Arrays.deepToString(usedLetters.toArray()));
+			System.out.println("Your guesses so far are " + java.util.Arrays.deepToString(usedLetters.toArray()));
 			System.out.println(java.util.Arrays.deepToString(guessString));
 			System.out.println("Please make your next guess");
 			String guess = input.nextLine();
 			guess = guess.toUpperCase();
 			
 			if(letterInWord(guess, hangmanWord)==false) {
+				if(guess.length()>1) {
+					System.out.println("Invalid Input - please input a single letter guess");
+				} else {
 
 				boolean added = usedLetters.add(guess);
 				if(added==false) {
@@ -148,6 +150,7 @@ public class hangmanGame {
 						System.out.println("|__     ");
 					}
 				}	
+				}
 			} else {
 				revealLetters(guess, hangmanWord, guessString);
 				System.out.println("Congratulations! Your guess is correct!");
